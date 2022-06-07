@@ -1,8 +1,8 @@
-package trafficfactory;
+package adcombo;
 
 import java.util.List;
 
-public class TrafficFactoryStatsEntity {
+public class AdcomboStatsEntity {
 
     public List<Inner> objects = null;
 

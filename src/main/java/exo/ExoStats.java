@@ -8,7 +8,7 @@ import com.google.gson.JsonParser;
 import config.OffersArray;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import trafficfactory.TrafficFactoryStatsEntity;
+import adcombo.AdcomboStatsEntity;
 import config.Property;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class ExoStats {
     public static StringBuilder parseExo() throws IOException {
 
         Gson gson = new Gson();
-        TrafficFactoryStatsEntity groupStats = gson.fromJson(AdcomboStats.getStat("exo"), TrafficFactoryStatsEntity.class);
+        AdcomboStatsEntity groupStats = gson.fromJson(AdcomboStats.getStat("exo"), AdcomboStatsEntity.class);
 
 
         String token = getAuthToken();

@@ -1,6 +1,7 @@
 package trafficfactory;
 
 import adcombo.AdcomboStats;
+import adcombo.AdcomboStatsEntity;
 import com.google.gson.Gson;
 import config.OffersArray;
 
@@ -18,8 +19,8 @@ public class TrafficFactoryStats {
         List<String> trafficStats = TrafficFactoryAuth.getInfoFromTF();
         Gson gson = new Gson();
 
-        TrafficFactoryStatsEntity entity = gson.fromJson(AdcomboStats.getStat("trafficfactory"),
-                TrafficFactoryStatsEntity.class);
+        AdcomboStatsEntity entity = gson.fromJson(AdcomboStats.getStat("trafficfactory"),
+                AdcomboStatsEntity.class);
 
         for (int i = 0; i < TF_ADCO_CAMPAIGN_ID.length; i++) {
             for (int j = 0; j < entity.objects.size(); j++) {
