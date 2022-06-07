@@ -1,6 +1,6 @@
 import config.Property;
 import exo.ExoStats;
-import tf.TrafficFactoryStats;
+import trafficfactory.TrafficFactoryStats;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;

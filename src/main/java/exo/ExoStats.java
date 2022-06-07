@@ -8,7 +8,7 @@ import com.google.gson.JsonParser;
 import config.OffersArray;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import tf.TrafficFactoryStatsEntity;
+import trafficfactory.TrafficFactoryStatsEntity;
 import config.Property;
 
 import java.io.IOException;
