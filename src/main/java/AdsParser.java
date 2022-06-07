@@ -1,3 +1,4 @@
+import config.Property;
 import exo.Exo;
 import tf.Tf;
 
@@ -11,16 +12,19 @@ import java.net.URISyntaxException;
 
 public class AdsParser {
     public static void main(String[] args) throws IOException, URISyntaxException {
-        StringBuilder result = new StringBuilder();
 
+        String downloadDir = Property.downloadDir;
+
+        StringBuilder result = new StringBuilder();
         result.append(Tf.parseTf()).append("\n\n\n").append(Exo.parseExo());
         System.out.println("Parse successfully");
 
 
-        try(FileWriter writer = new FileWriter("/Users/kot/Downloads/1234.txt", false)) {
+        try (FileWriter writer = new FileWriter(downloadDir + "1234.txt", false)) {
             writer.write(result.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        catch (Exception e) {e.printStackTrace();}
 
         System.out.println("Copying to buffer");
         String ctc = result.toString();
@@ -28,8 +32,8 @@ public class AdsParser {
         Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
         clpbrd.setContents(stringSelection, null);
 
-        File stats = new File("/Users/kot/Downloads/stats.json");
-        File stats2 = new File("/Users/kot/Downloads/stats (1).json");
+        File stats = new File(downloadDir + "stats.json");
+        File stats2 = new File(downloadDir + "stats (1).json");
 
         if (stats.delete() && stats2.delete()) {
             System.out.println("Success!!");

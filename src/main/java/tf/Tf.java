@@ -1,6 +1,7 @@
 package tf;
 
 import com.google.gson.Gson;
+import config.Property;
 
 import java.awt.*;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class Tf {
         scanner.nextLine();
 
         List<String> trafficStats = Auth.getInfoFromTF();
-        Reader reader = Files.newBufferedReader(Paths.get("/Users/kot/Downloads/stats.json"));
+        Reader reader = Files.newBufferedReader(Paths.get(Property.downloadDir+ "stats.json"));
         Gson gson = new Gson();
         Entity entity = gson.fromJson(reader, Entity.class);
 

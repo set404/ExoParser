@@ -1,12 +1,11 @@
 package tf;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
+import config.Property;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,13 +30,9 @@ public class Auth {
         Element meta = doc.select("[name=\"signin[_csrf_token]\"]").first();
         assert meta != null;
         String token = meta.attr("value");
-        //Load authorization properties from file
-        Properties property = new Properties();
-        FileInputStream fis = new FileInputStream("src/main/resources/config.properties");
-        property.load(fis);
-        String email = property.getProperty("tf.email");
-        String password = property.getProperty("tf.password");
 
+        String email = Property.tfEmail;
+        String password = Property.tfPassword;
         //Authorization, get cookies
         response = Jsoup
                 .connect("https://main.trafficfactory.biz/users/sign_in")

@@ -7,9 +7,9 @@ import com.google.gson.JsonParser;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import tf.Entity;
+import config.Property;
 
 import java.awt.*;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.Properties;
 import java.util.Scanner;
 
 
@@ -32,11 +31,8 @@ public class Exo {
 
     private static String getAuthToken() throws IOException {
 
-        Properties property = new Properties();
-        FileInputStream fis = new FileInputStream("src/main/resources/config.properties");
-        property.load(fis);
-        String userName = property.getProperty("exo.username");
-        String password = property.getProperty("exo.password");
+        String userName = Property.exoUserName;
+        String password = Property.exoPassword;
 
         String jsonBody = "{\"password\": \""+ password +"\",\n" +
                 "\"username\": \""+ userName +"\"}";
@@ -67,7 +63,7 @@ public class Exo {
         System.out.println("Press Enter...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
-        Reader reader = Files.newBufferedReader(Paths.get("/Users/kot/Downloads/stats (1).json"));
+        Reader reader = Files.newBufferedReader(Paths.get(Property.downloadDir+ "stats (1).json"));
         Gson gson = new Gson();
         Entity entity = gson.fromJson(reader, Entity.class);
 
