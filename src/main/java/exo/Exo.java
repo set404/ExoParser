@@ -1,5 +1,6 @@
 package exo;
 
+import adcombo.AuthAdcombo;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,17 +10,8 @@ import org.jsoup.Jsoup;
 import tf.Entity;
 import config.Property;
 
-import java.awt.*;
 import java.io.IOException;
-import java.io.Reader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.util.Scanner;
 
 
 public class Exo {
@@ -49,23 +41,10 @@ public class Exo {
         return jsonObject.get("token").getAsString();
     }
 
-    public static StringBuilder parseExo() throws IOException, URISyntaxException {
+    public static StringBuilder parseExo() throws IOException {
 
-        long timeStart = LocalDate.now().minusDays(1).toEpochSecond(LocalTime.MIN, ZoneOffset.of("-04:00"));
-        long timeEnd = LocalDate.now().toEpochSecond(LocalTime.MIN, ZoneOffset.of("-04:00")) - 1;
-
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            Desktop.getDesktop().browse(new URI("https://my.adcombo.com/api/stats?page=1&count=100&order=desc&sorting=group_by&stat_type=pp_stat&ts=" + timeStart + "&te=" + timeEnd + "&by_last_activity=false&percentage=false&normalize=false&comparing=false&group_by=offer_id&tz_offset=-10800&cols=uniq_traffic&cols=orders_confirmed&cols=orders_hold&cols=orders_rejected&cols=orders_trashed&cols=orders_total&cols=approve_total&cols=cr_uniq&cols=ctr_uniq&cols=user_orders_confirmed_income&cols=user_total_hold_income&cols=user_total_income&utm_source=exo&utm_source=-2&epc_factor=0&force=true"));
-        } else
-        {
-            System.out.println("Couldn't copy to clipboard");
-        }
-        System.out.println("Press Enter...");
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
-        Reader reader = Files.newBufferedReader(Paths.get(Property.downloadDir+ "stats (1).json"));
         Gson gson = new Gson();
-        Entity entity = gson.fromJson(reader, Entity.class);
+        Entity entity = gson.fromJson(AuthAdcombo.getStat("exo"), Entity.class);
 
 
         String token = getAuthToken();

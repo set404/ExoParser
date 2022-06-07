@@ -5,13 +5,11 @@ import tf.Tf;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class AdsParser {
-    public static void main(String[] args) throws IOException, URISyntaxException {
+    public static void main(String[] args) throws IOException {
 
         String downloadDir = Property.downloadDir;
 
@@ -31,12 +29,7 @@ public class AdsParser {
         StringSelection stringSelection = new StringSelection(ctc);
         Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
         clpbrd.setContents(stringSelection, null);
-
-        File stats = new File(downloadDir + "stats.json");
-        File stats2 = new File(downloadDir + "stats (1).json");
-
-        if (stats.delete() && stats2.delete()) {
-            System.out.println("Success!!");
-        }
+        System.out.println("Success");
     }
 }
+

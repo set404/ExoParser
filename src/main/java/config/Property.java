@@ -9,6 +9,9 @@ public class Property {
     public static String tfEmail;
     public static String tfPassword;
     public static String downloadDir;
+    public static String adEmail;
+    public static String adPassword;
+
 
     static {
         java.util.Properties property = new java.util.Properties();
@@ -24,5 +27,8 @@ public class Property {
         tfEmail = property.getProperty("tf.email");
         tfPassword = property.getProperty("tf.password");
         downloadDir = property.getProperty("download.dir");
+        adEmail = property.getProperty("ad.email");
+        adPassword = property.getProperty("ad.password");
+
     }
 }
