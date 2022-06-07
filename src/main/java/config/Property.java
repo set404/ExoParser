@@ -1,7 +1,7 @@
 package config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Property {
     public static String exoUserName;
@@ -15,10 +15,10 @@ public class Property {
 
     static {
         java.util.Properties property = new java.util.Properties();
-        FileInputStream fis;
+        InputStream inputStream;
         try {
-            fis = new FileInputStream("src/main/resources/config.properties");
-            property.load(fis);
+            inputStream = Property.class.getClassLoader().getResourceAsStream("config.properties");
+            property.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -29,6 +29,5 @@ public class Property {
         downloadDir = property.getProperty("download.dir");
         adEmail = property.getProperty("ad.email");
         adPassword = property.getProperty("ad.password");
-
     }
 }
