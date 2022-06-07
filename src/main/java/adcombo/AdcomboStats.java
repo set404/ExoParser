@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 
-public class AuthAdcombo {
+public class AdcomboStats {
     public static Connection.Response responseConnection;
 
     public static void getAuthResponse() throws IOException {
@@ -77,7 +77,7 @@ public class AuthAdcombo {
             timeZone = "-04:00";
         }
         long timeStart = LocalDate.now().minusDays(1).toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone));
-        long timeEnd = LocalDate.now().toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone)) - 1;
+        long timeEnd = LocalDate.now().minusDays(0).toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone)) - 1;
         responseConnection = Jsoup
                 .connect("https://my.adcombo.com/api/stats?page=1&count=100&order=desc&sorting=group_by&stat_type=pp_stat&ts=" + timeStart + "&te=" + timeEnd + "&by_last_activity=false&percentage=false&normalize=false&comparing=false&group_by=offer_id&tz_offset=-10800&cols=uniq_traffic&cols=orders_confirmed&cols=orders_hold&cols=orders_rejected&cols=orders_trashed&cols=orders_total&cols=approve_total&cols=cr_uniq&cols=ctr_uniq&cols=user_orders_confirmed_income&cols=user_total_hold_income&cols=user_total_income&utm_source=" + cpaNetwork + "&utm_source=-2&epc_factor=0&force=true")
                 .method(Connection.Method.GET)

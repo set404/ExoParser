@@ -1,22 +1,25 @@
 package tf;
 
-import adcombo.AuthAdcombo;
+import adcombo.AdcomboStats;
 import com.google.gson.Gson;
+import config.OffersArray;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tf {
-    private static final int[] TF_ADCO_CAMPAIGN_ID = {34393, 14106, 1781, 6519, 24940, 31565, 17341, 5530, 32920,
-            18124, 16172, 11846, 31981, 3388, 28586, 31535};
+public class TrafficFactoryStats {
+
+    private static final int[] TF_ADCO_CAMPAIGN_ID = OffersArray.TrafficFactory.CAMPAIGN;
     static List<String> offerStats = new ArrayList<>();
 
     public static StringBuilder parseTf() throws IOException {
 
-        List<String> trafficStats = Auth.getInfoFromTF();
+        List<String> trafficStats = TrafficFactoryAuth.getInfoFromTF();
         Gson gson = new Gson();
 
-        Entity entity = gson.fromJson(AuthAdcombo.getStat("tf"), Entity.class);
+        TrafficFactoryStatsEntity entity = gson.fromJson(AdcomboStats.getStat("tf"),
+                TrafficFactoryStatsEntity.class);
 
         for (int i = 0; i < TF_ADCO_CAMPAIGN_ID.length; i++) {
             for (int j = 0; j < entity.objects.size(); j++) {

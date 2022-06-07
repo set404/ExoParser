@@ -2,7 +2,7 @@ package tf;
 
 import java.util.List;
 
-public class Entity {
+public class TrafficFactoryStatsEntity {
 
     public List<Inner> objects = null;
 

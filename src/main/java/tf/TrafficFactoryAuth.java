@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import config.OffersArray;
 import config.Property;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -12,9 +13,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 
-public class Auth {
+public class TrafficFactoryAuth {
     //Campaign id from tf for search by name
-    public static final String[] TF_CAMPAIGN_ID = {"mx", "ma_2", "in_1", "id_6", "gt", "cr", "co", "ar_5", "iq_3", "CL", "eg", "my", "priap", "es_3", "at_2", "bd"};
+    public static final String[] TF_GROUP_ID = OffersArray.TrafficFactory.GROUP;
 
     public static List<String> getInfoFromTF() throws IOException {
         //Parse csrf token
@@ -43,7 +44,7 @@ public class Auth {
                 .cookies(response.cookies())
                 .execute();
 
-        for (String offer : TF_CAMPAIGN_ID) {
+        for (String offer : TF_GROUP_ID) {
             stat.add(parse(response, offer));
         }
         return stat;

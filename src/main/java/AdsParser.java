@@ -1,6 +1,6 @@
 import config.Property;
-import exo.Exo;
-import tf.Tf;
+import exo.ExoStats;
+import tf.TrafficFactoryStats;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -14,7 +14,7 @@ public class AdsParser {
         String downloadDir = Property.downloadDir;
 
         StringBuilder result = new StringBuilder();
-        result.append(Tf.parseTf()).append("\n\n\n").append(Exo.parseExo());
+        result.append(TrafficFactoryStats.parseTf()).append("\n\n\n").append(ExoStats.parseExo());
         System.out.println("Parse successfully");
 
 

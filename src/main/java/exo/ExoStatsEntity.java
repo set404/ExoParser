@@ -1,6 +1,6 @@
 package exo;
 
-public class Statistic {
+public class ExoStatsEntity {
 
     public Campaign resultTotal = null;
 
