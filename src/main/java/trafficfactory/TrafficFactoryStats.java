@@ -19,7 +19,7 @@ public class TrafficFactoryStats {
         List<String> trafficStats = TrafficFactoryAuth.getInfoFromTF();
         Gson gson = new Gson();
 
-        AdcomboStatsEntity entity = gson.fromJson(AdcomboStats.getStat("trafficfactory"),
+        AdcomboStatsEntity entity = gson.fromJson(AdcomboStats.getStat("tf"),
                 AdcomboStatsEntity.class);
 
         for (int i = 0; i < TF_ADCO_CAMPAIGN_ID.length; i++) {
