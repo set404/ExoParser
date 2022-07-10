@@ -2,8 +2,8 @@ package trafficfactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import config.OffersArray;
 import config.Property;
@@ -13,13 +13,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 
-public class TrafficFactoryAuth {
+public class TrafficFactory {
     //Campaign id from tf for search by name
     public static final String[] TF_GROUP_ID = OffersArray.TrafficFactory.GROUP;
+    private static final int[] TF_ADCO_CAMPAIGN_ID = OffersArray.TrafficFactory.CAMPAIGN;
 
-    public static List<String> getInfoFromTF() throws IOException {
+
+    public static Map<Integer, String> getStat(LocalDate dateStart, LocalDate dateEnd) throws IOException {
         //Parse csrf token
-        List<String> stat = new ArrayList<>();
+        Map<Integer, String> stat = new HashMap<>();
         Connection.Response response;
         System.out.println("Authorization...");
         response = Jsoup
@@ -44,17 +46,17 @@ public class TrafficFactoryAuth {
                 .cookies(response.cookies())
                 .execute();
 
-        for (String offer : TF_GROUP_ID) {
-            stat.add(parse(response, offer));
+        for (int i = 0; i < TF_GROUP_ID.length; i++) {
+            stat.put(TF_ADCO_CAMPAIGN_ID[i], parse(response, TF_GROUP_ID[i], dateStart, dateEnd));
+
         }
         return stat;
     }
 
-    private static String parse(Connection.Response response, String offerId) throws IOException {
+    private static String parse(Connection.Response response, String offerId, LocalDate dateStart, LocalDate dateEnd) throws IOException {
         System.out.println("Parse offer - " + offerId);
-        LocalDate date = LocalDate.now().minusDays(1);
         response = Jsoup
-                .connect("https://main.trafficfactory.biz/stats/campaigns/" + date + "-00-00/" + date + "-23-59?campaign_name=" + offerId)
+                .connect("https://main.trafficfactory.biz/stats/campaigns/" + dateStart + "-00-00/" + dateEnd.minusDays(1) + "-23-59?campaign_name=" + offerId)
                 .cookies(response.cookies())
                 .execute();
 

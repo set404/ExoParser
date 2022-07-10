@@ -1,6 +1,5 @@
 package exo;
 
-import adcombo.AdcomboStats;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,26 +7,30 @@ import com.google.gson.JsonParser;
 import config.OffersArray;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import adcombo.AdcomboStatsEntity;
 import config.Property;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class ExoStats {
+public class ExoClick {
 
     public static final String[] EXO_GROUP_ID = OffersArray.Exo.GROUP;
     public static final int[] EXO_ADCO_CAMPAIGN_ID = OffersArray.Exo.CAMPAIGN;
-    static LocalDate date = LocalDate.now().minusDays(1);
 
     private static String getAuthToken() throws IOException {
 
         String userName = Property.exoUserName;
         String password = Property.exoPassword;
 
-        String jsonBody = "{\"password\": \""+ password +"\",\n" +
-                "\"username\": \""+ userName +"\"}";
+        String jsonBody = """
+                {
+                "password": "%s",
+                "username": "%s"
+                }
+                """.formatted(password, userName);
         Connection.Response response = Jsoup
                 .connect("https://api.exoclick.com/v2/login")
                 .method(Connection.Method.POST)
@@ -41,28 +44,19 @@ public class ExoStats {
         return jsonObject.get("token").getAsString();
     }
 
-    public static StringBuilder parseExo() throws IOException {
-
-        Gson gson = new Gson();
-        AdcomboStatsEntity groupStats = gson.fromJson(AdcomboStats.getStat("exo"), AdcomboStatsEntity.class);
-
-
+    public static Map<Integer, String> getStat(LocalDate dateStart, LocalDate dateEnd) throws IOException {
+        Map<Integer, String> stat = new HashMap<>();
         String token = getAuthToken();
-        StringBuilder groups = new StringBuilder();
         for (int i = 0; i < EXO_GROUP_ID.length; i++) {
-            for (int j = 0; j < groupStats.objects.size(); j++) {
-                if (groupStats.objects.get(j).group_by == EXO_ADCO_CAMPAIGN_ID[i]) {
-                    groups.append(parse(EXO_GROUP_ID[i], token)).append("\t").append(groupStats.objects.get(j).toString()).append("\n");
-                }
-            }
+            stat.put(EXO_ADCO_CAMPAIGN_ID[i], parse(EXO_GROUP_ID[i], token, dateStart, dateEnd));
         }
-        return groups;
+        return stat;
     }
 
-    private static String parse(String group, String token) throws IOException {
+    private static String parse(String group, String token, LocalDate dateStart, LocalDate dateEnd) throws IOException {
         System.out.println("Parse group - " + group);
         Connection.Response response = Jsoup
-                .connect("https://api.exoclick.com/v2/statistics/a/campaign?groupid=" + group + "&date-to=" + date + "&date-from=" + date + "&include=totals&detailed=false")
+                .connect("https://api.exoclick.com/v2/statistics/a/campaign?groupid=" + group + "&date-to=" + dateStart + "&date-from=" + dateEnd.minusDays(1) + "&include=totals&detailed=false")
                 .method(Connection.Method.GET)
                 .ignoreContentType(true)
                 .header("Accept", "application/json")

@@ -13,6 +13,10 @@ public class AdcomboStatsEntity {
         public int group_by = 0;
         public double user_orders_confirmed_income = 0;
 
+        public int getCampaignId() {
+            return group_by;
+        }
+
         public String toString() {
             return String.valueOf(user_total_hold_income).replace(".",",") + "\t" +
                     orders_confirmed + "\t" +

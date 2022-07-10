@@ -1,5 +1,6 @@
 package adcombo;
 
+import com.google.gson.Gson;
 import config.Property;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -23,14 +24,17 @@ public class AdcomboStats {
         System.out.println("Cookies get");
 
         String token = response.cookies().get("X-CSRF-Token");
-        String jsonBody = "{\"email\": \"" + Property.adEmail + "\",\n" +
-                "\"password\": \"" + Property.adPassword + "\"}";
+        String jsonBody = """
+        {
+        "email": "%s",
+        "password": "%s"
+        }
+        """.formatted(Property.adEmail, Property.adPassword);
 
         response = Jsoup
                 .connect("https://my.adcombo.com/auth/login")
                 .method(Connection.Method.POST)
                 .header("x-csrf-token", token)
-
                 .header("authority", "my.adcombo.com")
                 .header("method", "POST")
                 .header("path", "/auth/login")
@@ -65,7 +69,7 @@ public class AdcomboStats {
         responseConnection = response;
     }
 
-    public static String getStat(String cpaNetwork) throws IOException {
+    public static AdcomboStatsEntity getStat(String cpaNetwork, LocalDate dateStart, LocalDate dateEnd) throws IOException {
 
         if (responseConnection == null) {
             getAuthResponse();
@@ -76,15 +80,19 @@ public class AdcomboStats {
         if (cpaNetwork.equals("exo")) {
             timeZone = "-04:00";
         }
-        long timeStart = LocalDate.now().minusDays(1).toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone));
-        long timeEnd = LocalDate.now().minusDays(0).toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone)) - 1;
+        long timeStart = dateStart.toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone));
+        long timeEnd = dateEnd.toEpochSecond(LocalTime.MIN, ZoneOffset.of(timeZone)) - 1;
         responseConnection = Jsoup
                 .connect("https://my.adcombo.com/api/stats?page=1&count=100&order=desc&sorting=group_by&stat_type=pp_stat&ts=" + timeStart + "&te=" + timeEnd + "&by_last_activity=false&percentage=false&normalize=false&comparing=false&group_by=offer_id&tz_offset=-10800&cols=uniq_traffic&cols=orders_confirmed&cols=orders_hold&cols=orders_rejected&cols=orders_trashed&cols=orders_total&cols=approve_total&cols=cr_uniq&cols=ctr_uniq&cols=user_orders_confirmed_income&cols=user_total_hold_income&cols=user_total_income&utm_source=" + cpaNetwork + "&utm_source=-2&epc_factor=0&force=true")
                 .method(Connection.Method.GET)
                 .cookies(responseConnection.cookies())
                 .ignoreContentType(true)
+                .maxBodySize(0)
                 .execute();
-        return responseConnection.body();
+        Gson gson = new Gson();
+
+        return gson.fromJson(responseConnection.body(),
+                AdcomboStatsEntity.class);
 
     }
 }
