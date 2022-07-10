@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CombineStat {
-    public static StringBuilder combine(Map<Integer, String> networkStat, AdcomboStatsEntity adcomboStat, int[] offers) {
+    public static StringBuilder combine(Map<Integer, String> networkStat, AdcomboStatsEntity adcomboStat, Integer[] offers) {
 
         List<String> offerStats = new ArrayList<>();
         Map<Integer, AdcomboStatsEntity.Inner> adcomboStatMap = adcomboStat.objects.stream()

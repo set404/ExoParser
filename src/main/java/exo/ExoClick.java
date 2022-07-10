@@ -13,12 +13,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
 
 
 public class ExoClick {
 
     public static final String[] EXO_GROUP_ID = OffersArray.Exo.GROUP;
-    public static final int[] EXO_ADCO_CAMPAIGN_ID = OffersArray.Exo.CAMPAIGN;
+    public static final Integer[] EXO_ADCO_CAMPAIGN_ID = OffersArray.Exo.CAMPAIGN;
 
     private static String getAuthToken() throws IOException {
 
@@ -44,11 +45,27 @@ public class ExoClick {
         return jsonObject.get("token").getAsString();
     }
 
-    public static Map<Integer, String> getStat(LocalDate dateStart, LocalDate dateEnd) throws IOException {
+    public static Map<Integer, String> getStat(LocalDate dateStart, LocalDate dateEnd) throws Exception {
         Map<Integer, String> stat = new HashMap<>();
         String token = getAuthToken();
+
+        ExecutorService service = Executors.newFixedThreadPool(10);
         for (int i = 0; i < EXO_GROUP_ID.length; i++) {
-            stat.put(EXO_ADCO_CAMPAIGN_ID[i], parse(EXO_GROUP_ID[i], token, dateStart, dateEnd));
+
+            String groupId = EXO_GROUP_ID[i];
+            int campaignId = EXO_ADCO_CAMPAIGN_ID[i];
+            service.execute(() -> {
+                try {
+                    stat.put(campaignId, parse(groupId, token, dateStart, dateEnd));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        service.shutdown();
+        if (!service.awaitTermination(1, TimeUnit.MINUTES)) {
+            System.out.println("Parse ExoClick timed out error");
         }
         return stat;
     }
@@ -65,6 +82,14 @@ public class ExoClick {
 
         Gson gson = new Gson();
         ExoStatsEntity statistic = gson.fromJson(response.body(), ExoStatsEntity.class);
-        return statistic.resultTotal.toString();
+
+        if (statistic.resultTotal == null) {
+            System.out.println("Group id - " + group + " not found");
+            return "0\t0";
+        } else {
+            return statistic.resultTotal.toString();
+        }
+
     }
+
 }

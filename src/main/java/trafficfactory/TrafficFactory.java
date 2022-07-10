@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
 
 import config.OffersArray;
 import config.Property;
@@ -16,10 +17,10 @@ import org.jsoup.nodes.Element;
 public class TrafficFactory {
     //Campaign id from tf for search by name
     public static final String[] TF_GROUP_ID = OffersArray.TrafficFactory.GROUP;
-    private static final int[] TF_ADCO_CAMPAIGN_ID = OffersArray.TrafficFactory.CAMPAIGN;
+    private static final Integer[] TF_ADCO_CAMPAIGN_ID = OffersArray.TrafficFactory.CAMPAIGN;
 
 
-    public static Map<Integer, String> getStat(LocalDate dateStart, LocalDate dateEnd) throws IOException {
+    public static Map<Integer, String> getStat(LocalDate dateStart, LocalDate dateEnd) throws IOException, InterruptedException {
         //Parse csrf token
         Map<Integer, String> stat = new HashMap<>();
         Connection.Response response;
@@ -46,9 +47,24 @@ public class TrafficFactory {
                 .cookies(response.cookies())
                 .execute();
 
+        ExecutorService service = Executors.newFixedThreadPool(50);
         for (int i = 0; i < TF_GROUP_ID.length; i++) {
-            stat.put(TF_ADCO_CAMPAIGN_ID[i], parse(response, TF_GROUP_ID[i], dateStart, dateEnd));
 
+            Connection.Response responseLoop = response;
+            String groupId = TF_GROUP_ID[i];
+            int campaignId = TF_ADCO_CAMPAIGN_ID[i];
+            service.execute(() -> {
+                try {
+                    stat.put(campaignId, parse(responseLoop, groupId, dateStart, dateEnd));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+        }
+        service.shutdown();
+        if (!service.awaitTermination(1, TimeUnit.MINUTES)) {
+            System.out.println("Parse Traffic Factory timed out error");
         }
         return stat;
     }
@@ -61,9 +77,14 @@ public class TrafficFactory {
                 .execute();
 
         Element elem = response.parse().select("[class=\"hg-admin-row hg-admin-row-total\"]").first();
-        assert elem != null;
-        String clicks = elem.getElementsByClass("hg-admin-list-td-deliveries").html().replace("&nbsp;", "");
-        String price = elem.getElementsByClass("hg-admin-list-td-total").html().replace("&nbsp;", "").replace("$", "");
+        String clicks = "0";
+        String price = "0";
+        if (elem != null) {
+            clicks = elem.getElementsByClass("hg-admin-list-td-deliveries").html().replace("&nbsp;", "");
+            price = elem.getElementsByClass("hg-admin-list-td-total").html().replace("&nbsp;", "").replace("$", "");
+        } else {
+            System.out.println("Offer id - " + offerId + " not found");
+        }
         return clicks + "\t" + price;
     }
 }

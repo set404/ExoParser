@@ -10,12 +10,11 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Map;
 
 public class AdsParser {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         String downloadDir = Property.downloadDir;
 
@@ -23,8 +22,8 @@ public class AdsParser {
         LocalDate dateEnd = OffersArray.parseDateEnd;
         StringBuilder result = new StringBuilder();
 
-        int[] exoOffers = OffersArray.Exo.CAMPAIGN;
-        int[] tfOffers = OffersArray.TrafficFactory.CAMPAIGN;
+        Integer[] exoOffers = OffersArray.Exo.CAMPAIGN;
+        Integer[] tfOffers = OffersArray.TrafficFactory.CAMPAIGN;
 
         AdcomboStatsEntity adcoTF = AdcomboStats.getStat("tf", dateStart, dateEnd);
         AdcomboStatsEntity adcoExo = AdcomboStats.getStat("exo", dateStart, dateEnd);
@@ -32,7 +31,9 @@ public class AdsParser {
         Map<Integer, String> tfStats = TrafficFactory.getStat(dateStart, dateEnd);
         Map<Integer, String> exoStats = ExoClick.getStat(dateStart, dateEnd);
 
-        result.append(CombineStat.combine(tfStats, adcoTF, tfOffers)).append("\n\n\n").append(CombineStat.combine(exoStats, adcoExo, exoOffers));
+        result
+                .append(CombineStat.combine(tfStats, adcoTF, tfOffers))
+                .append("\n\n\n").append(CombineStat.combine(exoStats, adcoExo, exoOffers));
         System.out.println("Parse successfully");
 
         try (FileWriter writer = new FileWriter(downloadDir + "1234.txt", false)) {
